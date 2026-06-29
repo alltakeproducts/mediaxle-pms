@@ -108,4 +108,5 @@ export interface AppSettings {
 /** Generic result shape returned by server actions to the client. */
 export type ActionResult<T = void> =
   | { success: true; data: T; message?: string }
+  | { success: true; message: string; data?: T }
   | { success: false; error: string; fieldErrors?: Record<string, string[]> };

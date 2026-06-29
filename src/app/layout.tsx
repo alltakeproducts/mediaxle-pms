@@ -1,0 +1,26 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Toaster } from "sonner";
+
+const inter = Inter({ subsets: ["latin"], display: "swap" });
+
+export const metadata: Metadata = {
+  title: "Performance Tracker",
+  description: "Internal Performance Tracker System",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        {children}
+        <Toaster richColors closeButton position="top-right" />
+      </body>
+    </html>
+  );
+}
