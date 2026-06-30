@@ -116,15 +116,33 @@ export function TrackerDetailClient({
       formData.append("maxScore", String(data.maxScore));
 
       let result;
+      let updatedCriteria: Criteria | null = null;
       if (editingCriteria) {
         result = await updateCriteria(editingCriteria.id, null, formData);
+        if (result.success && result.data) {
+          updatedCriteria = result.data;
+        }
       } else {
         result = await createCriteria(null, formData);
+        if (result.success && result.data) {
+          updatedCriteria = result.data;
+        }
       }
 
       if (result.success) {
         toast.success(result.message || "Success!");
         setCriteriaOpen(false);
+        if (updatedCriteria) {
+          if (editingCriteria) {
+            setCriteriaList(
+              criteriaList.map((c) =>
+                c.id === updatedCriteria!.id ? updatedCriteria! : c
+              )
+            );
+          } else {
+            setCriteriaList([...criteriaList, updatedCriteria]);
+          }
+        }
         router.refresh();
       } else {
         toast.error(result.error);
@@ -168,11 +186,16 @@ export function TrackerDetailClient({
 
   const handleAssign = async () => {
     if (!selectedTraineeId) return;
+    const trainee = unassignedList.find((t) => t.id === selectedTraineeId);
     const result = await assignTraineeToTracker(selectedTraineeId, tracker.id);
     if (result.success) {
       toast.success(result.message);
       setAssignOpen(false);
       setSelectedTraineeId("");
+      if (trainee) {
+        setTraineeList([...traineeList, trainee]);
+        setUnassignedList(unassignedList.filter((t) => t.id !== selectedTraineeId));
+      }
       router.refresh();
     } else {
       toast.error(result.error);
@@ -180,9 +203,14 @@ export function TrackerDetailClient({
   };
 
   const handleRemoveTrainee = async (traineeId: string) => {
+    const trainee = traineeList.find((t) => t.id === traineeId);
     const result = await removeTraineeFromTracker(traineeId, tracker.id);
     if (result.success) {
       toast.success(result.message);
+      if (trainee) {
+        setTraineeList(traineeList.filter((t) => t.id !== traineeId));
+        setUnassignedList([...unassignedList, trainee]);
+      }
       router.refresh();
     } else {
       toast.error(result.error);

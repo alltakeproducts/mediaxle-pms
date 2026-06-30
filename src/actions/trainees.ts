@@ -4,7 +4,7 @@ import "server-only";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
-import { TraineeModel, TrackerAssignmentModel } from "@/models";
+import { TraineeModel, TrackerAssignmentModel, TrackerModel } from "@/models";
 import { requireSession } from "@/lib/auth";
 import type { ActionResult, Trainee } from "@/types";
 
